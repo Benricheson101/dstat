@@ -45,9 +45,19 @@ const GUILD_READY_TIMEOUT time.Duration = time.Second * 20
 func init() {
 	flag.BoolVar(&outputJson, "json", false, "output JSON instead of a formatted list. useful for programmatic usage")
 	flag.BoolVar(&noLiveOutput, "nolive", false, "disables live output")
-	flag.StringVar(&token, "token", os.Getenv("DISCORD_TOKEN"), "the discord token to connect with")
+	flag.StringVar(&token, "token", "", "the discord token to connect with (default: \"$DISCORD_TOKEN\" environment variable)")
 
 	flag.Parse()
+
+	t, ok := os.LookupEnv("DISCORD_TOKEN")
+	if token == "" {
+		if ok {
+			token = t
+		} else {
+			fmt.Fprintln(os.Stderr, "no token was provided")
+			os.Exit(1)
+		}
+	}
 
 	// always output JSON if output is not a TTY
 	if fileInfo, _ := os.Stdout.Stat(); (fileInfo.Mode() & os.ModeCharDevice) == 0 {
@@ -249,6 +259,13 @@ func GetGatewayAuthed(token string) *GatewayBot {
 	req.Header.Set("Authorization", "Bot "+token)
 
 	res, _ := http.DefaultClient.Do(req)
+
+	if res.StatusCode != http.StatusOK {
+		e, _ := io.ReadAll(res.Body)
+		fmt.Fprintf(os.Stderr, "GET /gateway/bot failed with status code %v: %v\n", res.StatusCode, string(e))
+		os.Exit(1)
+	}
+
 	var body GatewayBot
 	if err := json.NewDecoder(res.Body).Decode(&body); err != nil {
 		panic(err)
