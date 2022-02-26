@@ -1,6 +1,8 @@
 *
 
 !/.dockerignore
+!/.github
+!/.github/**
 !/.gitignore
 !/Dockerfile
 !/LICENSE
