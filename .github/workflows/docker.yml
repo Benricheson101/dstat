@@ -3,6 +3,14 @@ name: 'Publish Docker image'
 on:
   push:
     branches: ['main']
+    # only run if source files are changed
+    paths:
+      - '**/*.go'
+      - '.dockerignore'
+      - 'Dockerfile'
+      - 'go.mod'
+      - 'go.sum'
+      - '.github/worflows/docker.yml'
 
 jobs:
   push_to_registries:
