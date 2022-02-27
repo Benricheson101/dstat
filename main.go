@@ -38,16 +38,25 @@ var (
 	outputJson   bool
 	noLiveOutput bool
 	token        string
-)
+	timeoutStr   string
 
-const GUILD_READY_TIMEOUT time.Duration = time.Second * 20
+	guildReadyTimeout time.Duration
+)
 
 func init() {
 	flag.BoolVar(&outputJson, "json", false, "output JSON instead of a formatted list. useful for programmatic usage")
 	flag.BoolVar(&noLiveOutput, "nolive", false, "disables live output")
 	flag.StringVar(&token, "token", "", "the discord token to connect with (default: \"$DISCORD_TOKEN\" environment variable)")
+	flag.StringVar(&timeoutStr, "timeout", "20s", "the time to wait for guilds to become available")
 
 	flag.Parse()
+
+	var err error
+	guildReadyTimeout, err = time.ParseDuration(timeoutStr)
+	if err != nil {
+		fmt.Fprintln(os.Stderr, "failed to parse duration:", err)
+		os.Exit(1)
+	}
 
 	t, ok := os.LookupEnv("DISCORD_TOKEN")
 	if token == "" {
@@ -129,7 +138,7 @@ func createSession(token string, shardId, shardCount int, done chan<- bool) *dis
 		wg.Add(1)
 		go func(shId int) {
 			defer wg.Done()
-			time.Sleep(GUILD_READY_TIMEOUT)
+			time.Sleep(guildReadyTimeout)
 
 			g := atomic.LoadInt32(&guildsReceived)
 			if shardGuildCount-g > 0 {

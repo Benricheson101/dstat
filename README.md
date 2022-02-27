@@ -20,6 +20,8 @@ Usage of dstat:
     	output JSON instead of a formatted list. useful for programmatic usage
   -nolive
     	disables live output
+  -timeout string
+    	the time to wait for guilds to become available (default "20s")
   -token string
     	the discord token to connect with (default: "$DISCORD_TOKEN" environment variable)
 ```
