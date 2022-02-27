@@ -49,5 +49,6 @@ jobs:
         with:
           context: '.'
           push: true
-          tags: '${{ steps.meta.outputs.tags }},${{ github.repository }}:latest'
+            # TODO: can the latest tag be automatic and not have `benricheson101/dstat` hard coded?
+          tags: '${{ steps.meta.outputs.tags }},benricheson101/dstat:latest'
           labels: '${{ steps.meta.outputs.labels }}'
