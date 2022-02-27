@@ -5,7 +5,7 @@ on:
     branches: ['main']
     # only run if source files are changed
     paths:
-      - '**/*.go'
+      - '**.go'
       - '.dockerignore'
       - 'Dockerfile'
       - 'go.mod'
