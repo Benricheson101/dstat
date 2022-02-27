@@ -1,4 +1,4 @@
-module github.com/benricheson101/gostat
+module github.com/benricheson101/dstat
 
 go 1.17
 
