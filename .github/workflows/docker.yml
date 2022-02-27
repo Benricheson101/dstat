@@ -43,12 +43,13 @@ jobs:
           images: |
             ${{ github.repository }}
             ghcr.io/${{ github.repository }}
+          tags: |
+            latest
 
       - name: 'Build and push Docker images'
         uses: 'docker/build-push-action@v2'
         with:
           context: '.'
           push: true
-            # TODO: can the latest tag be automatic and not have `benricheson101/dstat` hard coded?
-          tags: '${{ steps.meta.outputs.tags }},benricheson101/dstat:latest'
+          tags: '${{ steps.meta.outputs.tags }}'
           labels: '${{ steps.meta.outputs.labels }}'
